@@ -4,7 +4,7 @@ public class ResultadoEvento {
 
     private final boolean ganhou;
 
-    public ResultadoEvento(boolean ganhou) {
+    public ResultadoEvento(boolean ganhou){
         this.ganhou = ganhou;
     }
 
