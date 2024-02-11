@@ -1,10 +1,9 @@
 package br.com.ajrdevops.cm.modelo;
 
-import br.com.ajrdevops.cm.excecao.ExplosaoException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.function.BiConsumer;
 
 public class Campo {
 
@@ -17,10 +16,21 @@ public class Campo {
     private final int coluna;
 
     private List<Campo> vizinhos = new ArrayList<>();
+    private List<CampoObservador> observadores = new ArrayList<>();
+    //Outra forma, usando uma Interface funcional existente.
+    //private List<BiConsumer<Campo, CampoEvento>> observadores2 = new ArrayList<>();
 
     public Campo(int linha, int coluna) {
         this.linha = linha;
         this.coluna = coluna;
+    }
+
+    public void registrarObservador (CampoObservador observador){
+        observadores.add(observador);
+    }
+
+    private  void notificarObservadores (CampoEvento evento) {
+        observadores.forEach(o -> o.eventoOcorreu(this, evento));
     }
 
     boolean adicionarVizinho(Campo vizinho) {
@@ -45,17 +55,23 @@ public class Campo {
     void alternarMarcacao() {
         if (!aberto){
             marcado = !marcado;
+            if (marcado) {
+                notificarObservadores(CampoEvento.MARCAR);
+            } else {
+                notificarObservadores(CampoEvento.DESMARCAR);
+            }
         }
     }
 
     boolean abrir() {
 
         if (!aberto && !marcado) {
-            aberto = true;
-
             if (minado) {
-                throw new ExplosaoException();
+                notificarObservadores(CampoEvento.EXPLODIR);
+                return true;
             }
+
+            setAberto(true);
 
             if (vizinhancaSegura()) {
                 vizinhos.forEach(Campo::abrir);
@@ -89,7 +105,12 @@ public class Campo {
     public boolean isMinado() {
         return minado;
     }
-    void setAberto(boolean aberto) {this.aberto = aberto;}
+    void setAberto(boolean aberto) {
+        this.aberto = aberto;
+        if (aberto) {
+            notificarObservadores(CampoEvento.ABRIR);
+        }
+    }
     public int getLinha() {
         return linha;
     }
@@ -116,17 +137,4 @@ public class Campo {
         marcado = false;
     }
 
-    public String toString() {
-        if (marcado) {
-            return "x";
-        } else if (aberto && minado) {
-            return "*";
-        } else if (aberto && minasNaVizinhanca() >0) {
-            return Long.toString(minasNaVizinhanca());
-        } else if (aberto) {
-            return " ";
-        } else {
-            return  "?";
-        }
-    }
 }
