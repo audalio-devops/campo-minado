@@ -3,7 +3,6 @@ package br.com.ajrdevops.cm.visao;
 import br.com.ajrdevops.cm.modelo.Tabuleiro;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class TelaPrincipal extends JFrame {
 
