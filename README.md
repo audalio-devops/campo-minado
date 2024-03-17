@@ -19,6 +19,6 @@ Projeto desenvolvido em Java, durante o curso [Java 2020 COMPLETO: Do Zero ao Pr
 
 Para configurar o número de linhas, colunas e minas, basta alterar o comando abaixo, dentro da classe Aplicacao.java:
 	
-	~~~java
-	Tabuleiro tabuleiro = new Tabuleiro(6,6,6);
-	~~~
+~~~java
+Tabuleiro tabuleiro = new Tabuleiro(nro_linhas, nro_colunas, nro_minas);
+~~~
